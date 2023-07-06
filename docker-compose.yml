@@ -7,8 +7,11 @@ services:
     links:
       - proxy_redis
     environment:
-      db_type: SSDB
-      ssdb_host: proxy_redis
-      ssdb_port: 6379
+      db_type: REDIS
+      db_host: proxy_redis
+      db_port: 6379
+      GRABER_PROXY: ${GRABER_PROXY}
+#    volumes:
+#      - ./:/usr/src/app
   proxy_redis:
     image: "redis"

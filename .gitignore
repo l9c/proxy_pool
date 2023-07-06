@@ -2,3 +2,7 @@
 *.pyc
 *.log
 .venv
+
+proxy_pool.iml
+
+.env

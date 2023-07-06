@@ -53,21 +53,22 @@ DATABASES = {
 # register the proxy getter function
 
 PROXY_GETTER = [
-    "freeProxy01",
+    # "freeProxy01",
     # "freeProxy02",
     # "freeProxy03",
-    "freeProxy04",
-    "freeProxy05",
+    # "freeProxy04",
+    # "freeProxy05",
     # "freeProxy06",
     # "freeProxy07",
     # "freeProxy08",
-    "freeProxy09",
+    # "freeProxy09",
     # "freeProxy14",
-    "freeProxy15",
-    "proxygather_com",
+    # "freeProxy15",
+    # "proxygather_com",
     "proxy_list_download",
-    "spys_one",
-    "socks_proxy_net",
+    # "spys_one",
+    # "socks_proxy_net",
+    "thespeedx_socks_list",
 ]
 
 """ API config http://127.0.0.1:5010 """

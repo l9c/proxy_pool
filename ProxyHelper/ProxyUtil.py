@@ -23,18 +23,21 @@ def checkProxyUseful(proxy_obj):
     :param proxy_obj: Proxy object
     :return: Proxy object, status
     """
-
-    if validUsefulProxy(proxy_obj.proxy):
-        # 检测通过 更新proxy属性
-        proxy_obj.check_count += 1
+    result, response_ms, country = validUsefulProxy(proxy_obj.proxy)
+    if result:
+        # Proxy check passed, update proxy_obj properties
         proxy_obj.last_status = 1
-        proxy_obj.last_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        if proxy_obj.fail_count > 0:
-            proxy_obj.fail_count -= 1
-        return proxy_obj, True
+        proxy_obj.response_ms = response_ms
+        proxy_obj.country = country
+        proxy_obj.ignore = False
     else:
-        proxy_obj.check_count += 1
         proxy_obj.last_status = 0
-        proxy_obj.last_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         proxy_obj.fail_count += 1
-        return proxy_obj, False
+        if proxy_obj.check_count > 10 and proxy_obj.fail_count / proxy_obj.check_count > 0.5:
+            proxy_obj.ignore = True
+
+
+    proxy_obj.check_count += 1
+    proxy_obj.last_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    is_valid = (proxy_obj.last_status == 1)
+    return proxy_obj, is_valid

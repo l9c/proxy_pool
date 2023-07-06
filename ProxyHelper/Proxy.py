@@ -16,9 +16,8 @@ import json
 
 
 class Proxy(object):
-
     def __init__(self, proxy, fail_count=0, region="", proxy_type="",
-                 source="", check_count=0, last_status="", last_time=""):
+                 source="", check_count=0, last_status="", last_time="", ignore=False, response_ms=None, country=None):
         self._proxy = proxy
         self._fail_count = fail_count
         self._region = region
@@ -27,6 +26,9 @@ class Proxy(object):
         self._check_count = check_count
         self._last_status = last_status
         self._last_time = last_time
+        self._response_ms = response_ms
+        self._country = country
+        self._ignore = ignore
 
     @classmethod
     def newProxyFromJson(cls, proxy_json):
@@ -43,8 +45,26 @@ class Proxy(object):
                    source=proxy_dict.get("source", ""),
                    check_count=proxy_dict.get("check_count", 0),
                    last_status=proxy_dict.get("last_status", ""),
-                   last_time=proxy_dict.get("last_time", "")
+                   last_time=proxy_dict.get("last_time", ""),
+                   response_ms=proxy_dict.get("response_ms", None),
+                   country=proxy_dict.get("country", None),
+                   ignore=proxy_dict.get("ignore", False)
                    )
+
+    @property
+    def ignore(self):
+        """ ignore check """
+        return self._ignore
+
+    @property
+    def country(self):
+        """ country code """
+        return self._country
+
+    @property
+    def response_ms(self):
+        """ response time ms """
+        return self._response_ms
 
     @property
     def proxy(self):
@@ -92,9 +112,12 @@ class Proxy(object):
         return {"proxy": self._proxy,
                 "fail_count": self._fail_count,
                 "region": self._region,
+                "country": self.country,
                 "type": self._type,
                 "source": self._source,
                 "check_count": self.check_count,
+                "response_ms": self.response_ms,
+                "ignore": self.ignore,
                 "last_status": self.last_status,
                 "last_time": self.last_time}
 
@@ -104,6 +127,19 @@ class Proxy(object):
         return json.dumps(self.info_dict, ensure_ascii=False)
 
     # --- proxy method ---
+
+    @ignore.setter
+    def ignore(self, value):
+        self._ignore = value
+
+    @country.setter
+    def country(self, value):
+        self._country = value
+
+    @response_ms.setter
+    def response_ms(self, value):
+        self._response_ms = value
+
     @fail_count.setter
     def fail_count(self, value):
         self._fail_count = value

@@ -45,15 +45,21 @@ class UsefulProxyCheck(ProxyManager, Thread):
                 break
 
             proxy_obj = Proxy.newProxyFromJson(proxy_str)
-            proxy_obj, status = checkProxyUseful(proxy_obj)
-            if status or proxy_obj.fail_count < FAIL_COUNT:
-                self.db.put(proxy_obj)
-                self.log.info('UsefulProxyCheck - {}  : {} validation pass'.format(self.name,
+            if proxy_obj.ignore:
+                self.db.delete(proxy_obj.proxy)
+                self.log.info('UsefulProxyCheck - {}  : {} removed'.format(self.name,
                                                                                    proxy_obj.proxy.ljust(20)))
             else:
-                self.log.info('UsefulProxyCheck - {}  : {} validation fail'.format(self.name,
-                                                                                   proxy_obj.proxy.ljust(20)))
-                self.db.delete(proxy_obj.proxy)
+                proxy_obj, status = checkProxyUseful(proxy_obj)
+                self.db.put(proxy_obj)
+                if status:
+                    # self.db.put(proxy_obj)
+                    self.log.info('UsefulProxyCheck - {}  : {} validation pass'.format(self.name,
+                                                                                       proxy_obj.proxy.ljust(20)))
+                else:
+                    self.log.info('UsefulProxyCheck - {}  : {} validation fail'.format(self.name,
+                                                                                       proxy_obj.proxy.ljust(20)))
+
             self.queue.task_done()
 
 
@@ -66,7 +72,7 @@ def doUsefulProxyCheck():
         proxy_queue.put(_proxy)
 
     thread_list = list()
-    for index in range(10):
+    for index in range(50):
         thread_list.append(UsefulProxyCheck(proxy_queue, "thread_%s" % index))
 
     for thread in thread_list:

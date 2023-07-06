@@ -2,6 +2,8 @@
 # !/usr/bin/env python
 from bs4 import BeautifulSoup
 from requests_html import HTMLSession
+
+from Config.ConfigGetter import config
 from Util.utilFunction import getHtmlTree
 from Util.WebRequest import WebRequest
 """
@@ -370,15 +372,14 @@ class GetFreeProxy(object):
 
     @staticmethod
     def proxy_list_download():
-        urls = ["https://www.proxy-list.download/api/v1/get?type=socks4",
-                "https://www.proxy-list.download/api/v1/get?type=socks5"]
+        urls = ["https://www.proxy-list.download/api/v1/get?type=socks5"]
         proxy_resp = ""
         for url in urls:
             resp = requests.get(url, timeout=10)
             proxy_resp += resp.text
         proxy_list = proxy_resp.split('\n')
         for proxy in proxy_list:
-            yield "socks4://" + proxy
+            yield "socks5://" + proxy
 
     @staticmethod
     def proxygather_com():
@@ -436,6 +437,22 @@ class GetFreeProxy(object):
             script = td.find('script')
             if script:
                 yield "socks4://" + td.contents[0]+':'+td.contents[-1]
+
+    @staticmethod
+    def proxyscan_io():
+        url = 'https://www.proxyscan.io/api/proxy?last_check=86400&country=cn&uptime=30&ping=5000&limit=100&type=socks5'
+        return
+
+    @staticmethod
+    def thespeedx_socks_list():
+        urls = ["https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/socks5.txt"]
+        proxy_resp = ""
+        for url in urls:
+            resp = requests.get(url, proxies={'http': config.graber_proxy, 'https': config.graber_proxy}, timeout=10)
+            proxy_resp += resp.text
+        proxy_list = proxy_resp.split('\n')
+        for proxy in proxy_list:
+            yield "socks5://" + proxy
 
 
 if __name__ == '__main__':

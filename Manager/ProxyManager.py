@@ -67,6 +67,7 @@ class ProxyManager(object):
                         self.db.put(
                             Proxy(proxy, source=proxyGetter))
                         proxy_set.add(proxy)
+                self.log.info("ProxyFetch - {func}: end".format(func=proxyGetter))
             except Exception as e:
                 self.log.error(
                     "ProxyFetch - {func}: error".format(func=proxyGetter))
@@ -118,7 +119,7 @@ class ProxyManager(object):
                 random_choice = random.choice(item_list)
                 proxy_type = json.loads(random_choice)['proxy'].split("://")[0]
 
-                if proxy_type == 'socks4':
+                if proxy_type == 'socks5':
                     return Proxy.newProxyFromJson(random_choice)
 
         return None
@@ -139,7 +140,6 @@ class ProxyManager(object):
         """
         self.db.changeTable(self.useful_proxy_queue)
         item_list = self.db.getAll()
-
         return [Proxy.newProxyFromJson(_) for _ in item_list]
 
     def getNumber(self):

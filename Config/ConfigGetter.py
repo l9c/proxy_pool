@@ -57,6 +57,10 @@ class ConfigGetter(object):
     def host_port(self):
         return SERVER_API.get("PORT", 5010)
 
+    @LazyProperty
+    def graber_proxy(self):
+        return getenv('GRABER_PROXY', '')
+
 
 config = ConfigGetter()
 

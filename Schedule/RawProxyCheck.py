@@ -46,7 +46,8 @@ class RawProxyCheck(ProxyManager, Thread):
             proxy_obj, status = checkProxyUseful(proxy_obj)
             if status:
                 if self.db.exists(proxy_obj.proxy):
-                    self.log.info('RawProxyCheck - {}  : {} validation exists'.format(self.name,
+                    self.db.put(proxy_obj)
+                    self.log.info('RawProxyCheck - {}  : {} validation updated'.format(self.name,
                                                                                       proxy_obj.proxy.ljust(20)))
                 else:
                     self.db.put(proxy_obj)
@@ -67,7 +68,7 @@ def doRawProxyCheck():
     pm.db.clear()
 
     thread_list = list()
-    for index in range(20):
+    for index in range(50):
         thread_list.append(RawProxyCheck(proxy_queue, "thread_%s" % index))
 
     for thread in thread_list:

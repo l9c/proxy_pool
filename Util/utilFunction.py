@@ -11,6 +11,8 @@
                    2016/11/25: 添加robustCrawl、verifyProxy、getHtmlTree
 -------------------------------------------------
 """
+import time
+
 import requests
 from lxml import etree
 
@@ -87,10 +89,15 @@ def validUsefulProxy(proxy):
         proxy = proxy.decode("utf8")
     proxies = dict(http=f'{proxy}', https=f'{proxy}')
     try:
-        r = requests.get('http://www.baidu.com',
-                         proxies=proxies, timeout=10, verify=False)
+
+        start_time = time.time()
+        r = requests.get('http://ipinfo.io/json', proxies=proxies, timeout=2, verify=False)
+        end_time = time.time()
+        response_ms = (end_time - start_time) * 1000
+
         if r.status_code == 200:
-            return True
+            return True, int(response_ms), r.json()['country']
     except Exception as e:
         pass
-    return False
+    return False, None, None
+
