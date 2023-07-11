@@ -80,8 +80,10 @@ def refresh():
 
 @app.route('/get_all/')
 def getAll():
+    max_response_ms = int(request.args.get('response_ms', 0))
     proxies = ProxyManager().getAll()
-    return jsonify([_.info_dict for _ in proxies])
+    filtered_proxies = [_ for _ in proxies if _.response_ms < max_response_ms] if max_response_ms else proxies
+    return jsonify([_.info_dict for _ in filtered_proxies])
 
 
 @app.route('/delete/', methods=['GET'])
